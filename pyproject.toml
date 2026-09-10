@@ -1,0 +1,39 @@
+[project]
+name = "fastapi-freelancer-marketplace"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "MuhammadFaeez5", email = "faeezsalman939@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "alembic>=1.19.2",
+    "cryptography>=50.0.1",
+    "fastapi[standard]>=0.141.1",
+    "passlib[bcrypt]>=1.7.4",
+    "psycopg2-binary>=2.9.12",
+    "pydantic-settings>=2.15.0",
+    "pydantic[email]>=2.13.5",
+    "pyjwt>=2.13.0",
+    "sqlalchemy>=2.0",
+    "supabase>=2.0.0",
+]
+
+[project.scripts]
+fastapi-freelancer-marketplace = "fastapi_freelancer_marketplace:main"
+
+[build-system]
+requires = ["uv_build>=0.12.7,<0.13.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "httpx>=0.28.1",
+    "pytest>=9.1.1",
+    "pytest-asyncio>=1.4.0",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["app/tests"]
