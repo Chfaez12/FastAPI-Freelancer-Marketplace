@@ -96,23 +96,27 @@ def login_user(db: Session, data: LoginRequest):
     }
 
 
-def rotate_refresh_token(refresh_token: str):
+def rotate_refresh_token(refresh_token: str) -> dict:
     try:
         res = supabase.auth.refresh_session(refresh_token)
     except Exception:
-        raise AuthenticationFailedException()
+        raise AuthenticationFailedException("Invalid or expired refresh token.")
 
     if not res or not res.session:
-        raise AuthenticationFailedException()
+        raise AuthenticationFailedException("Could not refresh session.")
 
     return {
         "access_token": res.session.access_token,
         "refresh_token": res.session.refresh_token,
     }
 
-def revoke_token():
+
+
+def revoke_token(access_token: str | None = None) -> None:
     try:
-        supabase.auth.sign_out()
+        if access_token:
+            supabase.auth.sign_out(access_token)
+        else:
+            supabase.auth.sign_out()
     except Exception:
         pass
-

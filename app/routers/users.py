@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status,File, UploadFile
+from fastapi import APIRouter, Depends, HTTPException, status,File, UploadFile
 from sqlalchemy.orm import Session
 
 from app.dependencies.auth import get_current_user, get_db
@@ -6,7 +6,7 @@ from app.models.user import User
 from app.schemas.auth import UserResponse
 from app.schemas.user import ChangePasswordRequest, UpdateAccountRequest
 from app.services import user_service as auth_service
-from app.services.storage_service import upload_file_to_supabase, ALLOWED_IMAGE_TYPES
+from app.services.storage_service import delete_supabase_storage_file, upload_file_to_supabase, ALLOWED_IMAGE_TYPES
 
 
 router = APIRouter(prefix="/users", tags=["Users"])
@@ -72,17 +72,25 @@ def upload_user_avatar(
 
     return current_user
 
-@router.delete(
-    "/avatar",
-    response_model=UserResponse,
-    status_code=status.HTTP_200_OK,
-    summary="Remove Picture",
-)
+@router.delete("/avatar", status_code=status.HTTP_200_OK)
 def delete_avatar(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
+    if not current_user.avatar_url:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="User does not have an avatar to delete.",
+        )
+
+    delete_supabase_storage_file(
+        file_url=current_user.avatar_url,
+        bucket_name="avatars", 
+    )
+
     current_user.avatar_url = None
+    db.add(current_user)
     db.commit()
     db.refresh(current_user)
-    return current_user
+
+    return {"message": "Avatar deleted successfully from storage and database"}

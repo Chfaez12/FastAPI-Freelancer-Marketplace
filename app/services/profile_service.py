@@ -26,8 +26,7 @@ def create_or_get_profile(
     bio=data.bio,
     hourly_rate=data.hourly_rate,
     experience=data.experience,
-    availability=data.availability,
-    avatar_url=None,  
+    availability=data.availability, 
 )
     profile = profile_repo.create(db, profile, commit=False)
     db.flush()

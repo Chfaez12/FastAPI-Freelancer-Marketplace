@@ -63,11 +63,10 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None) -> s
     expire = datetime.now(timezone.utc) + (expires_delta or timedelta(minutes=60))
     to_encode.update({
         "exp": expire,
-        "aud": "authenticated",  # Crucial for Supabase Auth JWT validation
+        "aud": "authenticated",  
     })
 
     secret = settings.SUPABASE_JWT_SECRET
-    # Ensure this matches what your decode logic uses (typically HS256 for secret tokens)
     algorithm = getattr(settings, "JWT_ALGORITHM", "HS256")
     if algorithm.startswith("ES") or algorithm.startswith("RS"):
         algorithm = "HS256"

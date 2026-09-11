@@ -1,0 +1,10 @@
+PROJECT_NAME=Freelancer Marketplace
+
+DATABASE_URL=postgresql://postgres.yourproject@aws-0-ap-northeast-1.pooler.supabase.com:5432/postgres?sslmode=require
+SUPABASE_URL=https://yourproject.supabase.co
+SUPABASE_KEY=yourkey
+
+SUPABASE_JWT_SECRET=yoursecretkey
+JWT_ALGORITHM=ES256
+ACCESS_TOKEN_EXPIRE_MINUTES=10
+REFRESH_TOKEN_EXPIRE_DAYS=5

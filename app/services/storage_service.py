@@ -1,3 +1,4 @@
+from urllib.parse import urlparse
 import uuid
 from fastapi import UploadFile
 from app.core.supabase_client import supabase
@@ -54,3 +55,26 @@ def upload_file_to_supabase(
         "file_url": public_url,
         "file_size": file_size,
     }
+
+
+def delete_supabase_storage_file(file_url: str, bucket_name: str = "avatars") -> None:
+    
+    if not file_url:
+        return
+
+    try:
+        parsed_url = urlparse(file_url)
+        
+        path = parsed_url.path
+        target_prefix = f"/{bucket_name}/"
+
+        if target_prefix in path:
+            file_path = path.split(target_prefix, 1)[1]
+        else:
+            file_path = path.lstrip("/")
+
+        res = supabase.storage.from_(bucket_name).remove([file_path])
+        if hasattr(res, "error") and res.error:
+            print(f"Supabase storage delete error: {res.error}")
+    except Exception as e:
+        print(f"Failed to delete file from Supabase storage: {e}")
